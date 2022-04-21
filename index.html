@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>SwiftWasm Tracker</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script>
+        function humanReadableFileSize(bytes) {
+            const units = ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+            let unitIndex = 0;
+
+            while (Math.round(bytes) >= 1024 && unitIndex < units.length) {
+                bytes /= 1024;
+                ++unitIndex;
+            }
+
+            return (Math.round(bytes * 100) / 100) + " " + units[unitIndex];
+        }
+
+        async function start() {
+            const response = await fetch("./data.json");
+            const json = await response.json();
+            const series = [
+                {
+                    name: "ubuntu20.04_x86_64",
+                    data: json.artifacts.map(artifact => {
+                        return { y: artifact.size_in_bytes, x: Date.parse(artifact.created_at), artifact }
+                    })
+                },
+            ]
+
+            Highcharts.chart("chart", {
+                chart: {
+                    zoomType: "x"
+                },
+                title: {
+                    text: "hello.wasm"
+                },
+                xAxis: {
+                    type: 'datetime',
+                    title: {
+                        text: 'Date',
+                    },
+                    max: Date.parse(json.artifacts[0].created_at),
+                    min: Date.parse(json.artifacts[json.artifacts.length - 1].created_at),
+                },
+                yAxis: {
+                    title: {
+                        text: "File Size"
+                    },
+                    labels: {
+                        formatter: function () {
+                            return humanReadableFileSize(this.value);
+                        }
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        let tooltip = ""
+                        for (const key in this.point.artifact) {
+                            let value = this.point.artifact[key];
+                            if (key == "commit") {
+                                const commitLink = "https://github.com/swiftwasm/swift/commit/" + this.point.artifact.commit
+                                value = "<a href='" + commitLink + "' target='_blank'>" + value + "</a>"
+                            } else if (key == "run_id") {
+                                const runLink = "https://github.io/swiftwasm/swift/runs/" + value
+                                value = "<a href='" + runLink + "' target='_blank'>" + value + "</a>"
+                            }
+                            tooltip += `<b>${key}</b>: ${value}<br>`
+                        }
+                        return tooltip;
+                    },
+                    style: {
+                        pointerEvents: "auto",
+                    }
+                },
+                series
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", start);
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1><a href="https://github.com/swiftwasm" target="_blank">SwiftWasm</a> size tracker</h1>
+        <div id="chart">
+            <div id="loading">
+                Loading data...
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
