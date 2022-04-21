@@ -1,0 +1,17 @@
+name: Daily Update
+on:
+  schedule:
+  - cron: "0 0 * * *"
+
+jobs:
+  update:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+    - run: ruby ./scripts/collect-artifacts.rb
+    - uses: actions-js/push@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }} 
