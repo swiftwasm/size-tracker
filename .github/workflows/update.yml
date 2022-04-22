@@ -12,6 +12,8 @@ jobs:
         persist-credentials: false
         fetch-depth: 0
     - run: ruby ./scripts/collect-artifacts.rb
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions-js/push@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }} 
+        github_token: ${{ secrets.GITHUB_TOKEN }}
