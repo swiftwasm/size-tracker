@@ -34,13 +34,9 @@ loop do
   end
 
   break if runs.empty?
-  oldest_date = DateTime.parse(runs.last["created_at"])
-  if since_date && oldest_date < since_date
-    puts "No new artifact found in page #{page}"
-    break
-  end
 
   artifacts = runs.filter_map do |run|
+    next nil if DateTime.parse(run["created_at"]) < since_date
     puts "Fetching artifact of #{run["id"]}..."
     artifacts_result = %x(gh api '#{run["artifacts_url"]}')
     artifacts_result = JSON.parse(artifacts_result)
@@ -57,4 +53,10 @@ loop do
   data["artifacts"].concat(artifacts)
   File.write(data_file, JSON.pretty_generate(data))
   page += 1
+
+  oldest_date = DateTime.parse(runs.last["created_at"])
+  if since_date && oldest_date < since_date
+    puts "No new artifact found in page #{page}"
+    break
+  end
 end
