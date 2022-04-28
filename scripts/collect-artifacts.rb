@@ -50,7 +50,7 @@ loop do
     }
   end
 
-  data["artifacts"].concat(artifacts)
+  data["artifacts"].prepend(*artifacts)
   File.write(data_file, JSON.pretty_generate(data))
   page += 1
 
