@@ -36,7 +36,7 @@ loop do
   break if runs.empty?
 
   artifacts = runs.filter_map do |run|
-    next nil if DateTime.parse(run["created_at"]) < since_date
+    next nil if DateTime.parse(run["created_at"]) <= since_date
     puts "Fetching artifact of #{run["id"]}..."
     artifacts_result = %x(gh api '#{run["artifacts_url"]}')
     artifacts_result = JSON.parse(artifacts_result)
