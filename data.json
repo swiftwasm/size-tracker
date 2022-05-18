@@ -1,6 +1,12 @@
 {
   "artifacts": [
     {
+      "run_id": 2339882915,
+      "created_at": "2022-05-17T16:01:13Z",
+      "commit": "be1a6653e62dc88965059b9eadd9e8e51709e076",
+      "size_in_bytes": 6623081
+    },
+    {
       "run_id": 2330431302,
       "created_at": "2022-05-16T07:42:09Z",
       "commit": "b74a4df58edf83ee474e5dce7d099a3dffd6d08d",
@@ -925,5 +931,5 @@
       "size_in_bytes": 9738720
     }
   ],
-  "updated_at": "2022-05-16T07:42:09Z"
+  "updated_at": "2022-05-17T16:01:13Z"
 }
